@@ -33,6 +33,11 @@ The API will be available at http://127.0.0.1:8000/
 Interactive docs: http://127.0.0.1:8000/docs
 
 ## Screenshots
+###  Request  
+![](screenshots/post_request.png)
+
+### Response
+![](screenshots/response.png)
 
 ## What I Learned
 
@@ -47,5 +52,6 @@ Building this project taught me how to:
 4.Build a FastAPI backend for serving a question-answering service.
 
 5.Organize a small project for clarity, including docs, examples, and reproducible results.
+
 
 
