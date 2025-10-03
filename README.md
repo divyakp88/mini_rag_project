@@ -7,7 +7,7 @@ It allows users to ask questions over a small set of documents and retrieve rele
 
 ## Setup Instructions
 
-1. Clone the repo:  
+1.Clone the repo:  
 ```bash
 git clone https://github.com/divyakp88/mini_rag_project.git
 ```
@@ -31,7 +31,7 @@ python main.py
 The API will be available at http://127.0.0.1:7860
 
 ## Screenshots
-### Response
+
 ![](screenshots/response.png)
 
 ## What I Learned
@@ -47,6 +47,7 @@ Working with embeddings and reranking gave me a real understanding of how AI can
 Most importantly, I built confidence in myself — that I can start with zero clarity, break a big task into smaller ones, and finally create something that works end to end, with both backend logic and a frontend interface.
 
 This project is not just code on my laptop — it’s proof that I have the determination to learn, adapt, and deliver results.
+
 
 
 
