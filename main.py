@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import gradio as gr
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -11,9 +12,7 @@ app=FastAPI()  #create FastAPI app
 index=faiss.read_index("embeddings/index.faiss") #loading the FAISS index back from disk into memory
 ids=np.load("embeddings/ids.npy") #load ids
 
-#load chunks
-conn=sqlite3.connect("chunks.db")
-c=conn.cursor()
+
 
 #load embedding model
 model=SentenceTransformer('all-MiniLM-L6-v2')
@@ -31,8 +30,9 @@ def keyword_score(chunk_text,query):
 def home():
     return {"message": "API is running. Use POST /ask"}
 
-@app.post("/ask")
-def ask(q:str,k:int=5,mode:str="hybrid"):
+
+def retrieve_top_k(q:str,k:int=5):
+    k=int(k)
     conn=sqlite3.connect("chunks.db")
     c=conn.cursor()
     #1.embed question
@@ -79,14 +79,37 @@ def ask(q:str,k:int=5,mode:str="hybrid"):
     candidate_chunks.sort(key=lambda x:x['final_score'],reverse=True)
 
     #pick top answer
-    top_chunk=candidate_chunks[0] if candidate_chunks else None
-    answer_text=top_chunk['text'][:300] if top_chunk else None
-
+    top_chunk=candidate_chunks[:k] if candidate_chunks else []
+    #answer_text=top_chunk['text'][:300] if top_chunk else None
+    
+    
+    
+    answer_text=top_chunk[0]['text'][:300] if top_chunk else "No answer found"
+    contexts=[{"title":chunk['title'],"url":chunk['url'],"text":chunk['text'][:300]}
+              for chunk in top_chunk
+              ]
     conn.close()
 
-    #return json response
-    return {
-        "answer":answer_text,
-        "contexts":candidate_chunks[:k],
-        "reranker_used":True
-    }
+    return answer_text,contexts
+@app.post("/ask")
+def ask(q: str, k: int = 5):
+    answer,contexts=retrieve_top_k(q,k)
+    return {"answer":answer,"contexts":contexts,"reranker_used":True}
+
+# Gradio interface...
+iface=gr.Interface(
+    fn=retrieve_top_k,
+    inputs=[
+        gr.Textbox(lines=4,placeholder="Type Your Question Here...",label="Question"),
+        gr.Slider(minimum=1,maximum=5,step=1,value=3,label="Number of top answers (k)")
+    ],
+    outputs=[
+        gr.Textbox(lines=4,label="Top Answer"),
+        gr.JSON(label="Top-k Contexts")
+    ],
+    title="Mini RAG+Hybrid REranker",
+    description="Ask a question about Industrial & Machine Safety PDFs. Hybrid reranker returns top-k relevant contexts."
+)
+if __name__=="__main__":
+    iface.launch()
+

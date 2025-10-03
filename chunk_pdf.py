@@ -8,6 +8,7 @@ import json
 PDF_FOLDER ="data/industrial-safety-pdfs"
 SOURCES_JSON ="data/sources.json"
 DB_PATH ="chunks.db"
+vector_counter = 0
 
 # mapping from url to folder
 
@@ -48,7 +49,8 @@ CREATE TABLE IF NOT EXISTS chunks (
     pdf_title TEXT,
     pdf_url TEXT,
     chunk_text TEXT,
-    chunk_len INTEGER
+    chunk_len INTEGER,
+    vector_index INTEGER
 )
 ''')
 
@@ -66,6 +68,7 @@ def split_into_chunks(text, chunk_size=300):
     for i in range(0, len(words), chunk_size):
         chunk = " ".join(words[i:i+chunk_size])
         chunks.append(chunk)
+      
     return chunks
 
 #process PDFs
@@ -81,9 +84,11 @@ for src in sources:
     for page in reader.pages:
         full_text+= page.extract_text()+"\n"
     chunks=split_into_chunks(full_text)
+    #print(len(chunks))
     for chunk in chunks:
-        c.execute("INSERT INTO chunks(pdf_title,pdf_url,chunk_text,chunk_len) VALUES(?,?,?,?)",
-                  (src['title'],src['url'],chunk,len(chunk.split())))
+        c.execute("INSERT INTO chunks(pdf_title,pdf_url,chunk_text,chunk_len,vector_index) VALUES(?,?,?,?,?)",
+                  (src['title'],src['url'],chunk,len(chunk.split()),vector_counter))
+        vector_counter += 1
 conn.commit()
 conn.close()
 print("PDF chunked and saved to SQLite")

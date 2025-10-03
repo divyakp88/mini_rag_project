@@ -10,6 +10,7 @@ conn=sqlite3.connect("chunks.db")
 c=conn.cursor()
 c.execute("SELECT vector_index,chunk_text FROM chunks ORDER BY vector_index")
 data=c.fetchall()
+print("Rows fetched from DB:", len(data))
 conn.close()
 
 ids=[row[0] for row in data]
