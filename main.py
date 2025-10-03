@@ -30,6 +30,14 @@ def keyword_score(chunk_text,query):
 def home():
     return {"message": "API is running. Use POST /ask"}
 
+def format_contexts(contexts):
+    formatted = ""
+    for i, ctx in enumerate(contexts):
+        formatted += f"{i+1}. Title: {ctx['title']}\n"
+        formatted += f"   URL: {ctx['url']}\n"
+        formatted += f"   Text: {ctx['text']}\n\n"
+    return formatted
+
 
 def retrieve_top_k(q:str,k:int=5):
     k=int(k)
@@ -85,12 +93,10 @@ def retrieve_top_k(q:str,k:int=5):
     
     
     answer_text=top_chunk[0]['text'][:300] if top_chunk else "No answer found"
-    contexts=[{"title":chunk['title'],"url":chunk['url'],"text":chunk['text'][:300]}
-              for chunk in top_chunk
-              ]
+    contexts_formatted = format_contexts(top_chunk)
     conn.close()
 
-    return answer_text,contexts
+    return answer_text,contexts_formatted 
 @app.post("/ask")
 def ask(q: str, k: int = 5):
     answer,contexts=retrieve_top_k(q,k)
@@ -105,7 +111,7 @@ iface=gr.Interface(
     ],
     outputs=[
         gr.Textbox(lines=4,label="Top Answer"),
-        gr.JSON(label="Top-k Contexts")
+        gr.TextArea(lines=20,label="Top-k Contexts")
     ],
     title="Mini RAG+Hybrid REranker",
     description="Ask a question about Industrial & Machine Safety PDFs. Hybrid reranker returns top-k relevant contexts."
