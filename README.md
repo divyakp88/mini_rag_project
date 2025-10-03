@@ -26,32 +26,27 @@ pip install -r requirements.txt
 ```
 4.Run the FastAPI app:
 ```bash
-uvicorn api.main:app --reload
+python main.py
 ```
-The API will be available at http://127.0.0.1:8000/
-
-Interactive docs: http://127.0.0.1:8000/docs
+The API will be available at http://127.0.0.1:7860
 
 ## Screenshots
-###  Request  
-![](screenshots/post_request.png)
-
 ### Response
 ![](screenshots/response.png)
 
 ## What I Learned
 
-Building this project taught me how to:
+Building this RAG project was more than just coding for me — it was a journey of persistence, problem-solving, and rediscovering my own strength.
 
-1.Split documents into chunks and generate embeddings using Sentence Transformers.
+At first, I struggled with concepts like vector databases, embeddings, FAISS indexing, and integrating them with FastAPI. Many times, errors felt like roadblocks, but I learned to approach them step by step, researching, debugging, and finding solutions on my own.
 
-2.Use FAISS for efficient similarity search.
+I realized how important data preprocessing and schema design are, because one small mistake in the database affected my entire pipeline. This taught me patience and attention to detail.
 
-3.Implement a hybrid reranker combining vector similarity and keyword matching.
+Working with embeddings and reranking gave me a real understanding of how AI can make search smarter. Earlier, these concepts felt abstract, but now I can confidently explain and implement them.
 
-4.Build a FastAPI backend for serving a question-answering service.
+Most importantly, I built confidence in myself — that I can start with zero clarity, break a big task into smaller ones, and finally create something that works end to end, with both backend logic and a frontend interface.
 
-5.Organize a small project for clarity, including docs, examples, and reproducible results.
+This project is not just code on my laptop — it’s proof that I have the determination to learn, adapt, and deliver results.
 
 
 
